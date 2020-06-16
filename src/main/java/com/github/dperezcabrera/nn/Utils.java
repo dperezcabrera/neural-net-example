@@ -93,7 +93,7 @@ public final class Utils {
     }
 
     public static String format(double value, String format){
-        if (value < 0) {
+        if (value >= 0) {
             format = " ".concat(format);
         }
         return String.format(format, value);
