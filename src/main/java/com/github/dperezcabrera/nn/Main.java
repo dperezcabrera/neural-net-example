@@ -3,9 +3,7 @@ package com.github.dperezcabrera.nn;
 import com.github.dperezcabrera.nn.Utils.Function;
 import com.github.dperezcabrera.nn.Utils.Function2;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class Main {
@@ -40,18 +38,27 @@ public class Main {
 
         double[][] result = nn.train(data, l2Cost, learningRate, true);
 
-        
+        showResults(data, result);
+    }
 
+    private static void showResults(Data data, double[][] result) {
         double[][] x = data.getX();
         double[] y = data.getY();
-        System.out.println("[  coordenadas   ] | G | Predicción");
+        System.out.println("[  coordenadas   ] | Grupo | Predicción | Resultado ");
+        int ok = 0;
+        String resultado;
         for (int i = 0; i < result.length; i++) {
-            System.out.println(String.join(" | ", "[" + Utils.format(x[i][0], "%.4f") + ", " + Utils.format(x[i][1], "%.4f") + "]", String.format("  %.0f  ", y[i]), String.format("%.6f", result[i][0])));
+            if (Math.round(result[i][0]) == y[i]) {
+                ok++;
+                resultado = "   V   ";
+            } else {
+                resultado = "   X   ";
+            }
+            System.out.println(String.join(" | ", "[" + Utils.format(x[i][0], "%.4f") + ", " + Utils.format(x[i][1], "%.4f") + "]", String.format("  %.0f  ", y[i]), String.format(" %.6f ", result[i][0]), resultado));
         }
-        System.out.println("[  coordenadas   ] | Grupo | Predicción\n");
+        System.out.println("[  coordenadas   ] | Grupo | Predicción | Resultado \n");
         
-        double error = DoubleStream.of(Utils.apply(result, data.getYExpanded(), l2Cost[0])[0]).average().orElse(Double.NaN);
-        System.out.println("Error medio: " + String.format("%.8f", error));
+        System.out.println("Aciertos:    " + String.format("%.2f", (100.0 * ok)/result.length)+"%");
     }
 
     static class NeuralLayer {
